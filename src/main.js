@@ -1,3 +1,6 @@
+import Player from './player'
+import Field from './field'
+
 export default class Main {
   constructor(util) {
     this.stopSim = false
@@ -6,11 +9,15 @@ export default class Main {
     this.fps = 1000
     this.elapsed = null
     this.util = util
+    this.testPlayer = null
+    this.field = null
   }
 
   beginGame(framesPerSecond) {
     if (this.util.getType(framesPerSecond) === '[object Number]') {
       this.fps = framesPerSecond
+      this.field = new Field(500, 500)
+      this.field.init()
       this.mainLoop()
     } else {
       throw new Error('Cannot start game: incorrect param data types')
@@ -35,10 +42,15 @@ export default class Main {
   }
   
   update() {
+    if (!this.testPlayer) {
+      this.testPlayer = new Player(5, 'Billy', 'Ballhog')
+    }
     console.log('updating')
   }
   
   render() {
+    this.field.render()
+    this.testPlayer.render(this.field.canvas, this.field.ctx)
   }
 
 }

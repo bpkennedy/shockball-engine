@@ -4,4 +4,6 @@ import Util from './util'
 const util = new Util()
 let main = new Main(util)
 
-main.beginGame(1000)
+window.onload = function() {
+    main.beginGame(1000)
+}
