@@ -1,4 +1,5 @@
 import Util from './util'
+const util = new Util()
 
 export default class World {
   constructor() {
@@ -8,56 +9,21 @@ export default class World {
   }
 
   register(object) {
-    if (Util.getType(amount) === '[object Number]') {
+    if (util.getType(object) === '[object Object]') {
       this.objects.push(object)
     }
   }
 
-  unregister(object) {
-    if (Util.getType(amount) === '[object Number]') {
-      this.objects.push(object)
-    }
+  update() {
+console.log('registered objects are:')
+console.log(this.objects)
   }
-  
-  moveUp(amount) {
-    if (Util.getType(amount) === '[object Number]') {
-      this.y += amount;
-    } else {
-      throw new Error('Cannot move Player: incorrect param data type');
-    }
-  }
-  
-  moveDown(amount) {
-    if (Util.getType(amount) === '[object Number]') {
-      this.y -= amount;
-    } else {
-      throw new Error('Cannot move Player: incorrect param data type');
-    }
-  }
-  
-  moveLeft(amount) {
-    if (Util.getType(amount) === '[object Number]') {
-      this.x -= amount;
-    } else {
-      throw new Error('Cannot move Player: incorrect param data type');
-    }
-  }
-  
-  moveRight(amount) {
-    if (Util.getType(amount) === '[object Number]') {
-      this.x += amount;
-    } else {
-      throw new Error('Cannot move Player: incorrect param data type');
-    }
-  }
-  
-  setPosition(x, y) {
-    if (Util.getType(x) === '[object Number]' && Util.getType(y) === '[object Number]') {
-      this.x = x;
-      this.y = y;
-    } else {
-      throw new Error('Cannot set Player: incorrect param data types');
-    }
+
+  switchSides() {
+    const oldRightPlayers = this.rightPlayers
+    const oldLeftPlayers = this.leftPlayers
+    this.rightPlayers = oldLeftPlayers
+    this.leftPlayers = oldRightPlayers
   }
 
 }
