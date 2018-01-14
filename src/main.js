@@ -31,11 +31,11 @@ export default class Main {
       this.world.register(board)
       
       //register ball
-      const ball = new this.Ball()
+      const ball = new this.Ball(pitch)
       this.world.register(ball)
 
       //register players
-      const test = new this.Player(1, 'Brian', 'Kennedy')
+      const test = new this.Player(1, 'Brian', 'Kennedy', this.world, 'right')
       this.world.register(test)
       this.world.rightPlayers.push(test)
 
@@ -56,7 +56,6 @@ export default class Main {
   
     if (this.elapsed > this.fps) {
       this.update()
-      this.render()
       this.then = this.now - (this.elapsed % this.fps)
     }
     

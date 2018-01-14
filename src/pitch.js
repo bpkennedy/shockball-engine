@@ -4,11 +4,15 @@ export default class Pitch {
     this.lastGoalSide = null
     this.secondHalf = false
     this.halfTime = 10000
-    this.goalPillars = {
+    this.world = undefined
+    this.goalResistence = {
+      left: 2,
+      right: 2
+    }
+    this.goalPit = {
       left: -5,
       right: 5
     }
-    this.world = undefined
   }
 
   checkRules(world) {
