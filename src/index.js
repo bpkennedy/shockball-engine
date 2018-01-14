@@ -9,4 +9,4 @@ import Util from './util'
 const util = new Util()
 let main = new Main(util, World, Player, Pitch, Board, Ball)
 
-main.beginGame(1000)
+main.beginGame(3000)

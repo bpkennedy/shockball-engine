@@ -18,4 +18,12 @@ export default class Board {
     this.timer = 0
   }
 
+  addScore(side) {
+    if (side === 'right') {
+      this.rightScore++
+    } else {
+      this.leftScore++
+    }
+  }
+
 }
