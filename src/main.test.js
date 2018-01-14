@@ -1,6 +1,8 @@
 import Main from './main'
 import Util from './util'
-let main = new Main(new Util())
+import World from './world'
+import Player from './player'
+let main = new Main(new Util(), World, Player)
 
 test('should define some global variables', () => {
   expect(main.stopSim).toBeDefined();

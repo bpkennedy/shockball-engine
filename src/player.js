@@ -14,6 +14,9 @@ export default class Player {
     }
   }
 
+  update() {
+  }
+
   moveUp(amount) {
     if (util.getType(amount) === '[object Number]') {
       this.y += amount;

@@ -1,5 +1,7 @@
+import Pitch from "./pitch";
+
 export default class Main {
-  constructor(util, World, Player) {
+  constructor(util, World, Player, Pitch, Board, Ball) {
     this.stopSim = false
     this.now = Date.now()
     this.then = Date.now()
@@ -8,6 +10,9 @@ export default class Main {
     this.util = util
     this.World = World
     this.Player = Player
+    this.Pitch = Pitch
+    this.Board = Board
+    this.Ball = Ball
     this.counter = 0
   }
 
@@ -16,14 +21,25 @@ export default class Main {
       this.fps = framesPerSecond
       //register world
       this.world = new this.World()
+      
       //register pitch
-
+      const pitch = new this.Pitch()
+      this.world.register(pitch)
+      
       //register scoreboard
+      const board = new this.Board(pitch)
+      this.world.register(board)
+      
+      //register ball
+      const ball = new this.Ball()
+      this.world.register(ball)
 
       //register players
       const test = new this.Player(1, 'Brian', 'Kennedy')
       this.world.register(test)
       this.world.rightPlayers.push(test)
+
+      //start main game loop
       this.mainLoop()
     } else {
       throw new Error('Cannot start game: incorrect param data types')
@@ -53,9 +69,6 @@ export default class Main {
     if (this.counter.toString() === '5') {
     }
     console.log('counter is: ' + this.counter )
-  }
-  
-  render() {
   }
 
 }

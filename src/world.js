@@ -15,8 +15,11 @@ export default class World {
   }
 
   update() {
-console.log('registered objects are:')
-console.log(this.objects)
+    for (let worldObject of this.objects) {
+      if (worldObject.update) {
+        worldObject.update()
+      }
+    }
   }
 
   switchSides() {
