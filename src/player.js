@@ -1,8 +1,9 @@
 import Util from './util'
+const util = new Util()
 
 export default class Player {
   constructor(uid, firstName, lastName) {
-    if (Util.getType(uid) === '[object Number]' && Util.getType(firstName) === '[object String]' && Util.getType(lastName) === '[object String]') {
+    if (util.getType(uid) === '[object Number]' && util.getType(firstName) === '[object String]' && util.getType(lastName) === '[object String]') {
       this.uid = uid;
       this.firstName = firstName;
       this.lastName = lastName;
@@ -13,8 +14,11 @@ export default class Player {
     }
   }
 
+  update() {
+  }
+
   moveUp(amount) {
-    if (Util.getType(amount) === '[object Number]') {
+    if (util.getType(amount) === '[object Number]') {
       this.y += amount;
     } else {
       throw new Error('Cannot move Player: incorrect param data type');
@@ -22,7 +26,7 @@ export default class Player {
   }
   
   moveDown(amount) {
-    if (Util.getType(amount) === '[object Number]') {
+    if (util.getType(amount) === '[object Number]') {
       this.y -= amount;
     } else {
       throw new Error('Cannot move Player: incorrect param data type');
@@ -30,7 +34,7 @@ export default class Player {
   }
   
   moveLeft(amount) {
-    if (Util.getType(amount) === '[object Number]') {
+    if (util.getType(amount) === '[object Number]') {
       this.x -= amount;
     } else {
       throw new Error('Cannot move Player: incorrect param data type');
@@ -38,7 +42,7 @@ export default class Player {
   }
   
   moveRight(amount) {
-    if (Util.getType(amount) === '[object Number]') {
+    if (util.getType(amount) === '[object Number]') {
       this.x += amount;
     } else {
       throw new Error('Cannot move Player: incorrect param data type');
@@ -46,7 +50,7 @@ export default class Player {
   }
   
   setPosition(x, y) {
-    if (Util.getType(x) === '[object Number]' && Util.getType(y) === '[object Number]') {
+    if (util.getType(x) === '[object Number]' && util.getType(y) === '[object Number]') {
       this.x = x;
       this.y = y;
     } else {
