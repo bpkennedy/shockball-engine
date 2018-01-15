@@ -2,17 +2,16 @@ import Util from './util'
 const util = new Util()
 
 export default class Player {
-  constructor(uid, firstName, lastName, world, goalSide) {
+  constructor(uid, firstName, lastName, world, challenge, goalSide) {
     if (util.getType(uid) === '[object Number]' && util.getType(firstName) === '[object String]' && util.getType(lastName) === '[object String]') {
       this.uid = uid
       this.firstName = firstName
       this.lastName = lastName
-      this.x = 0
-      this.y = 0
       this.passing = 15
       this.toughness = 36 
       this.throwing = 20
       this.goalSide = goalSide
+      this.challenge = challenge
       this.realWorldModel = world
       this.playerWorldModel = {
         objects: []
@@ -56,7 +55,7 @@ export default class Player {
     const ball = gameObjects[2]
     const players = gameObjects[3]
     if (pitch.state === 'before_kickoff') {
-      console.log('Player thinks: we are before kickoff...')
+      console.log('Player ' + this.uid + ' thinks: we are before kickoff...')
       // we are before kickoff so player wants to get the ball
       console.log('Player ' + this.uid + ' tries to tackle ball')
       this.tackleBall(ball)
@@ -69,8 +68,7 @@ export default class Player {
       // for now the goalPosition (default 5) minus the goalProximity must be less than the goal resistence (default 2)
       const thinksHasScoreChance = this.analyzeCanScore(ball, pitch)
       if (thinksHasScoreChance) {
-        console.log('Player ' + this.uid + ' thinks he has a score chance!')
-        console.log('He shoots...')
+        console.log('Player ' + this.uid + ' thinks he can score.  He shoots!')
         this.tryScore(pitch, ball, board)
         return
       } else {
@@ -86,13 +84,20 @@ export default class Player {
           return
         }
       }
+    } else if (pitch.state === 'normal_play' && ball.possessedBy !== null && ball.lastSideTouched === this.goalSide) {
+      // Ball is being carried by a player of my team
+    } else if (pitch.state === 'normal_play' && ball.possessedBy !== null && ball.lastSideTouched !== this.goalSide) {
+      // Ball is being carried by a player of other team
+      console.log('Player ' + this.uid + ' sees that ' + ball.possessedBy + ', on the other team, has the ball.')
+    } else if (pitch.state === 'normal_play' && ball.possessedBy === null) {
+      // Ball is has been fumbled during play and is free
     }
   }
 
   analyzeCanScore(ball, pitch) {
-    const targetGoalResistence = pitch.goalResistence[this.goalSide]
+    const targetGoalResistence = Math.abs(pitch.goalResistence[this.goalSide])
     const absoluteGoalPit = Math.abs(pitch.goalPit[this.goalSide])
-    if (absoluteGoalPit - ball.goalProximity < targetGoalResistence) {
+    if (absoluteGoalPit - Math.abs(ball.goalProximity) < targetGoalResistence) {
       return true
     } else {
       return false
@@ -108,12 +113,7 @@ export default class Player {
   }
 
   tryScore(pitch, ball, board) {
-    // here is where the player THINKS he can score so he TRIES, and it's where reality kicks in and other players are attempting to block/stop/intercept him.
-    // for now, there are no other players so he's free to proceed unhindered, will write logic for challenging later
-    ball.reset()
-    board.addScore(this.goalSide)
-    pitch.lastGoalSide = this.goalSide
-    pitch.state = 'before_kickoff'
+    this.challenge.addTryScore(this)
   }
 
   tryPass() {
@@ -121,19 +121,11 @@ export default class Player {
   }
 
   tryRun(pitch, ball) {
-    // here the player THINKS he can ran, but in reality he'd have challengers.
-    // for now, he is unhindered
-    if (ball.goalProximity < pitch.goalPit[this.goalSide]) {
-      console.log('Player ' + this.uid + ' tries to run with the ball!')
-      ball.goalProximity++
-    } else {
-      console.log('Player ' + this.uid + ' is right in front of goal!')
-    }
+    this.challenge.addTryRun(this)
   }
 
   tackleBall(ball) {
-    // here would be a struggle between whoever else on the field for control of the ball, or shot block, or pass interception/block, after winning the encounter, .possess is called
-    ball.possess(this.uid)
+    this.challenge.addTackleBall(this)
   }
 
 }
