@@ -1,4 +1,5 @@
-import Pitch from "./pitch";
+import Challenge from "./challenge"
+const challenge = new Challenge()
 
 export default class Main {
   constructor(util, World, Player, Pitch, Board, Ball) {
@@ -35,9 +36,12 @@ export default class Main {
       this.world.register(ball)
 
       //register players
-      const test = new this.Player(1, 'Brian', 'Kennedy', this.world, 'right')
+      const test = new this.Player(1, 'Brian', 'Kennedy', this.world, challenge, 'right')
       this.world.register(test)
-      this.world.rightPlayers.push(test)
+      this.world.leftPlayers.push(test)
+      const test2 = new this.Player(2, 'Yan', 'Yansen', this.world, challenge, 'left')
+      this.world.register(test2)
+      this.world.rightPlayers.push(test2)
 
       //start main game loop
       this.mainLoop()
@@ -64,10 +68,12 @@ export default class Main {
   
   update() {
     this.world.update()
+    challenge.update(this.world)
+    challenge.reset()
     this.counter++
     if (this.counter.toString() === '5') {
     }
-    console.log('counter is: ' + this.counter )
+    // console.log('counter is: ' + this.counter )
   }
 
 }

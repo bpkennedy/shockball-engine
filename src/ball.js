@@ -1,6 +1,7 @@
 export default class Ball {
   constructor(pitch) {
     this.lastPlayerTouched = null
+    this.lastSideTouched = null
     this.possessedBy = null
     this.lane = 'center' //or "right" or "left"
     this.goalProximity = 0
