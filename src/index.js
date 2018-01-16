@@ -42,6 +42,34 @@ var mainComponent = {
         </pre>
       </div>
       <h1>Shockball Match v0.1</h1>
+      <div class="playByPlay">
+        <div class="live-indicator" ng-if="$ctrl.isRunning">ON LIVE</div>
+        <div class="scoreboard">
+          <div class=""></div>
+        </div>
+        <div class="timeline">
+          <ul>
+            <li class="right">
+              <div class="eventTime">20'</div>
+              <div class="event-info">
+                <div class="name">Brian</div>
+                <div class="middleDot">&middot;</div>
+                <div class="action">shoots</div>
+              </div>
+              <div class="eventText">smashes one off of the post!</div>
+            </li>
+            <li class="left">
+              <div class="eventTime">24'</div>
+              <div class="event-info">
+                <div class="name">Yan</div>
+                <div class="middleDot">&middot;</div>
+                <div class="action">shoots</div>
+              </div>
+              <div class="eventText">tries for a quick shot!</div>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
   `
 };
