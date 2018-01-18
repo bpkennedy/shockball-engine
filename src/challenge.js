@@ -1,5 +1,5 @@
 export default class Challenge {
-  constructor() {
+  constructor(record) {
     this.world = null
     this.pitch = null
     this.board = null
@@ -9,6 +9,7 @@ export default class Challenge {
     this.tackleBall = []
     this.playerTryRun = []
     this.playerTryScore = []
+    this.record = record
   }
 
   update(world) {
@@ -57,6 +58,7 @@ export default class Challenge {
       return player.toughness === highestToughness
     })
     console.log('Player ' + winningPlayer.uid + ' wins the tackle on the ball!')
+    this.record.add(winningPlayer, 'tackles ball', this.board.gameTime)
     this.ball.possess(winningPlayer.uid)
     this.ball.lastSideTouched = this.goalSide
     this.ball.lastPlayerTouched = this.uid
@@ -73,9 +75,11 @@ export default class Challenge {
     if (Math.abs(this.ball.goalProximity) < Math.abs(this.pitch.goalPit[runningPlayer.goalSide])) {
       if (runningPlayer.goalSide === 'right') {
         console.log('Player ' + runningPlayer.uid + ' tries to run left with the ball!')
+        this.record.add(runningPlayer, 'runs ball', this.board.gameTime)
         this.ball.goalProximity--
       } else if (runningPlayer.goalSide === 'left') {
         console.log('Player ' + runningPlayer.uid + ' tries to run right with the ball!')
+        this.record.add(runningPlayer, 'runs ball', this.board.gameTime)
         this.ball.goalProximity++
       }
     } else {
@@ -93,6 +97,7 @@ export default class Challenge {
     })
     
     console.log('Player ' + shootingPlayer.uid + ' scores a goal!!')
+    this.record.add(shootingPlayer, 'shoots', this.board.gameTime)
     this.ball.reset()
     this.board.addScore(shootingPlayer.goalSide)
     this.pitch.lastGoalSide = shootingPlayer.goalSide

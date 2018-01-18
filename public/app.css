@@ -19,6 +19,14 @@ main {
     background-color: #F5F5F5;
 }
 
+main > div {
+    background-image: url(./shockball2.jpg);
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
 
 /* timeline section  */
 .live-indicator {
@@ -49,6 +57,9 @@ main {
     padding: 50px 0;
     margin-top: 0;
     padding-top:0;
+    height: 400px;
+    overflow: auto;
+    overflow-x: hidden;
 }
 
 .timeline ul li {

@@ -4,18 +4,18 @@ export default class Board {
     this.rightTeamName = "???"
     this.leftScore = 0
     this.rightScore = 0
-    this.timer = 0
+    this.gameTime = 0
     this.pitch = pitch
   }
 
   update() {
     if (this.pitch.state === 'play_on') {
-      this.timer++
+      this.gameTime++
     }
   }
 
   reset() {
-    this.timer = 0
+    this.gameTime = 0
   }
 
   addScore(side) {

@@ -2,14 +2,18 @@ import Util from './util'
 const util = new Util()
 
 export default class Player {
-  constructor(uid, firstName, lastName, world, challenge, goalSide) {
-    if (util.getType(uid) === '[object Number]' && util.getType(firstName) === '[object String]' && util.getType(lastName) === '[object String]') {
-      this.uid = uid
-      this.firstName = firstName
-      this.lastName = lastName
-      this.passing = 15
-      this.toughness = 36 
-      this.throwing = 20
+  constructor(playerStats, world, challenge, goalSide) {
+    if (util.getType(playerStats) === '[object Object]') {
+      this.uid = playerStats.uid
+      this.firstName = playerStats.firstName
+      this.lastName = playerStats.lastName
+      this.picUrl = playerStats.picUrl
+      this.teamUid = playerStats.teamUid
+      this.teamName = playerStats.teamName
+      this.teamPicUrl = playerStats.teamPicUrl
+      this.passing = playerStats.passing
+      this.toughness = playerStats.toughness
+      this.throwing = playerStats.throwing
       this.goalSide = goalSide
       this.challenge = challenge
       this.realWorldModel = world
@@ -61,7 +65,7 @@ export default class Player {
       this.tackleBall(ball)
       return
     }
-    if (pitch.state === 'normal_play' && ball.possessedBy === this.uid) {
+    if (pitch.state === 'play_on' && ball.possessedBy === this.uid) {
       // this player has the ball - better trying priority 1 action first!
       // player looks to score first, if he's in range.
       // for now the goal is empty and it has a default resistence of 2
@@ -84,12 +88,12 @@ export default class Player {
           return
         }
       }
-    } else if (pitch.state === 'normal_play' && ball.possessedBy !== null && ball.lastSideTouched === this.goalSide) {
+    } else if (pitch.state === 'play_on' && ball.possessedBy !== null && ball.lastSideTouched === this.goalSide) {
       // Ball is being carried by a player of my team
-    } else if (pitch.state === 'normal_play' && ball.possessedBy !== null && ball.lastSideTouched !== this.goalSide) {
+    } else if (pitch.state === 'play_on' && ball.possessedBy !== null && ball.lastSideTouched !== this.goalSide) {
       // Ball is being carried by a player of other team
       console.log('Player ' + this.uid + ' sees that ' + ball.possessedBy + ', on the other team, has the ball.')
-    } else if (pitch.state === 'normal_play' && ball.possessedBy === null) {
+    } else if (pitch.state === 'play_on' && ball.possessedBy === null) {
       // Ball is has been fumbled during play and is free
     }
   }

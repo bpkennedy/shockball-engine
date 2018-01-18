@@ -1,5 +1,6 @@
 import angular from 'angular'
 import angularJson from 'json-tree2'
+import scrollGlue from 'angularjs-scroll-glue'
 
 import Main from './main'
 import World from './world'
@@ -8,20 +9,21 @@ import Pitch from './pitch'
 import Board from './board'
 import Ball from './ball'
 import Util from './util'
-import Challenge from './challenge'
-import { setTimeout } from 'timers';
+import Record from './record'
+const record = new Record()
 
 const util = new Util()
-let main = new Main(util, World, Player, Pitch, Board, Ball, Challenge)
+let main = new Main(util, World, Player, Pitch, Board, Ball, record)
 
 main.beginGame(3000)
 
-
+// create the front-end ui with angular
 var mainComponent = {
   controller: function ($scope){
     var ctrl = this;
     ctrl.isRunning = false;
     ctrl.game = main;
+    ctrl.gameEvents = record.records
     ctrl.someMethod = function (event) {
       ctrl.api = event.message;
     };
@@ -30,6 +32,7 @@ var mainComponent = {
         ctrl.isRunning = true;
         setInterval(function() {
           $scope.$apply(main)
+          console.log(ctrl.gameEvents)
         }, 3000);
       }
     }
@@ -48,17 +51,17 @@ var mainComponent = {
           <div class=""></div>
         </div>
         <div class="timeline">
-          <ul>
-            <li class="right">
-              <div class="eventTime">20'</div>
+          <ul scroll-glue>
+            <li ng-repeat="event in $ctrl.gameEvents" ng-class="::event.recordPitchSide">
+              <div class="eventTime">{{::event.recordGameTime}}'</div>
               <div class="event-info">
-                <div class="name">Brian</div>
+                <div class="name">{{::event.actorFirstName}}</div>
                 <div class="middleDot">&middot;</div>
-                <div class="action">shoots</div>
+                <div class="action">{{::event.recordType}}</div>
               </div>
-              <div class="eventText">smashes one off of the post!</div>
+              <div class="eventText">{{::event.recordCommentator}}</div>
             </li>
-            <li class="left">
+           <!-- <li class="left">
               <div class="eventTime">24'</div>
               <div class="event-info">
                 <div class="name">Yan</div>
@@ -66,7 +69,7 @@ var mainComponent = {
                 <div class="action">shoots</div>
               </div>
               <div class="eventText">tries for a quick shot!</div>
-            </li>
+            </li> -->
           </ul>
         </div>
       </div>
@@ -74,5 +77,5 @@ var mainComponent = {
   `
 };
 
-angular.module('shockballGame', ['json-tree'])
+angular.module('shockballGame', ['json-tree', 'luegg.directives'])
 .component('main', mainComponent)
