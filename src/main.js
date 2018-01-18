@@ -1,8 +1,8 @@
 import Challenge from "./challenge"
-const challenge = new Challenge()
+let challenge = null // will set once this.record is available
 
 export default class Main {
-  constructor(util, World, Player, Pitch, Board, Ball) {
+  constructor(util, World, Player, Pitch, Board, Ball, record) {
     this.stopSim = false
     this.now = Date.now()
     this.then = Date.now()
@@ -14,11 +14,13 @@ export default class Main {
     this.Pitch = Pitch
     this.Board = Board
     this.Ball = Ball
+    this.record = record
     this.counter = 0
   }
 
   beginGame(framesPerSecond) {
     if (this.util.getType(framesPerSecond) === '[object Number]') {
+      challenge = new Challenge(this.record)
       this.fps = framesPerSecond
       //register world
       this.world = new this.World()
@@ -36,12 +38,37 @@ export default class Main {
       this.world.register(ball)
 
       //register players
-      const test = new this.Player(1, 'Brian', 'Kennedy', this.world, challenge, 'right')
-      this.world.register(test)
-      this.world.leftPlayers.push(test)
-      const test2 = new this.Player(2, 'Yan', 'Yansen', this.world, challenge, 'left')
-      this.world.register(test2)
-      this.world.rightPlayers.push(test2)
+      const playerObjectFromDb = {
+        uid: 1,
+        firstName: 'Tholme',
+        lastName: 'So',
+        picUrl: '//i736.photobucket.com/albums/xx4/bpkennedy/norringtonfreelance.jpg',
+        teamUid: '-KnCepjY8BLF_0bcANzF',
+        teamName: 'Abregado Gentlemen',
+        teamPicUrl: 'http://www.brandcrowd.com/gallery/brands/thumbs/thumb14751184306802.jpg',
+        passing: 15,
+        toughness: 36,
+        throwing: 20
+      }
+      const brian = new this.Player(playerObjectFromDb, this.world, challenge, 'right')
+      this.world.register(brian)
+      this.world.leftPlayers.push(brian)
+      
+      const playerObjectFromDb2 = {
+        uid: 2,
+        firstName: 'Yan',
+        lastName: 'Yansen',
+        picUrl: '//tresario.com/forum/index.php?action=dlattach;attach=271;type=avatar',
+        teamUid: '-KnGp3lbMpZVvl1bGGvy',
+        teamName: 'Kashyyk Rangers',
+        teamPicUrl: 'https://vignette1.wikia.nocookie.net/limmierpg/images/4/42/Rangers.jpg/revision/latest?cb=20140503184850',
+        passing: 15,
+        toughness: 36,
+        throwing: 20
+      }
+      const yan = new this.Player(playerObjectFromDb2, this.world, challenge, 'left')
+      this.world.register(yan)
+      this.world.rightPlayers.push(yan)
 
       //start main game loop
       this.mainLoop()

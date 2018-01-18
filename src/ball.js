@@ -26,7 +26,7 @@ export default class Ball {
 
   possess(playerId) {
     this.possessedBy = playerId
-    this.pitch.state = 'normal_play'
+    this.pitch.state = 'play_on'
   }
 
 }
