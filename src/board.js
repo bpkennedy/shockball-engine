@@ -5,6 +5,7 @@ export default class Board {
     this.leftScore = 0
     this.rightScore = 0
     this.gameTime = 0
+    this.startTime = new Date()
     this.pitch = pitch
   }
 
