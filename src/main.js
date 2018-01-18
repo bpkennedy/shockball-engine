@@ -1,14 +1,17 @@
 import Challenge from "./challenge"
+import Util from './util'
+
 let challenge = null // will set once this.record is available
+const util = new Util()
 
 export default class Main {
-  constructor(util, World, Player, Pitch, Board, Ball, record) {
+  constructor(matchData, World, Player, Pitch, Board, Ball, record) {
     this.stopSim = false
     this.now = Date.now()
     this.then = Date.now()
     this.fps = 1000
     this.elapsed = null
-    this.util = util
+    this.matchData = matchData
     this.World = World
     this.Player = Player
     this.Pitch = Pitch
@@ -19,14 +22,14 @@ export default class Main {
   }
 
   beginGame(framesPerSecond) {
-    if (this.util.getType(framesPerSecond) === '[object Number]') {
+    if (util.getType(framesPerSecond) === '[object Number]') {
       challenge = new Challenge(this.record)
       this.fps = framesPerSecond
       //register world
       this.world = new this.World()
       
       //register pitch
-      const pitch = new this.Pitch()
+      const pitch = new this.Pitch(this.matchData)
       this.world.register(pitch)
       
       //register scoreboard
@@ -37,38 +40,20 @@ export default class Main {
       const ball = new this.Ball(pitch)
       this.world.register(ball)
 
-      //register players
-      const playerObjectFromDb = {
-        uid: 1,
-        firstName: 'Tholme',
-        lastName: 'So',
-        picUrl: '//i736.photobucket.com/albums/xx4/bpkennedy/norringtonfreelance.jpg',
-        teamUid: '-KnCepjY8BLF_0bcANzF',
-        teamName: 'Abregado Gentlemen',
-        teamPicUrl: 'http://www.brandcrowd.com/gallery/brands/thumbs/thumb14751184306802.jpg',
-        passing: 15,
-        toughness: 36,
-        throwing: 20
+
+      //register home team players on left side
+      for (let player of this.matchData.homeTeam.players) {
+        const playerToAdd = new this.Player(player, this.world, challenge, 'left')
+        this.world.register(playerToAdd)
+        this.world.leftPlayers.push(playerToAdd)
       }
-      const brian = new this.Player(playerObjectFromDb, this.world, challenge, 'right')
-      this.world.register(brian)
-      this.world.leftPlayers.push(brian)
       
-      const playerObjectFromDb2 = {
-        uid: 2,
-        firstName: 'Yan',
-        lastName: 'Yansen',
-        picUrl: '//tresario.com/forum/index.php?action=dlattach;attach=271;type=avatar',
-        teamUid: '-KnGp3lbMpZVvl1bGGvy',
-        teamName: 'Kashyyk Rangers',
-        teamPicUrl: 'https://vignette1.wikia.nocookie.net/limmierpg/images/4/42/Rangers.jpg/revision/latest?cb=20140503184850',
-        passing: 15,
-        toughness: 36,
-        throwing: 20
+      //register away team players on right side
+      for (let player of this.matchData.awayTeam.players) {
+        const playerToAdd = new this.Player(player, this.world, challenge, 'right')
+        this.world.register(playerToAdd)
+        this.world.rightPlayers.push(playerToAdd)
       }
-      const yan = new this.Player(playerObjectFromDb2, this.world, challenge, 'left')
-      this.world.register(yan)
-      this.world.rightPlayers.push(yan)
 
       //start main game loop
       this.mainLoop()
@@ -99,6 +84,7 @@ export default class Main {
     challenge.reset()
     this.counter++
     if (this.counter.toString() === '5') {
+      // this.stopSim = true
     }
     // console.log('counter is: ' + this.counter )
   }

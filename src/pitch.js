@@ -1,6 +1,7 @@
 export default class Pitch {
-  constructor() {
+  constructor(matchData) {
     this.state = 'before_kickoff'
+    this.pitchOwnedBy = matchData.homeTeam.teamVenueName
     this.lastGoalSide = null
     this.secondHalf = false
     this.halfTime = 10000
