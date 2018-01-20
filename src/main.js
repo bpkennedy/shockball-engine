@@ -70,7 +70,7 @@ export default class Main {
       const playerToAdd = new this.Player(bot1, this.world, challenge, 'right')
       this.world.register(playerToAdd)
       this.world.leftPlayers.push(playerToAdd)
-      const bot4 = botGenerator.create('-KnGp3lbMpZVvl1bGGvy', 'Kashyyyk Rangers', 'https://vignette1.wikia.nocookie.net/limmierpg/images/4/42/Rangers.jpg/revision/latest?cb=20140503184850')
+      const bot4 = botGenerator.create('-KnCepjY8BLF_0bcANzF', 'Abregado Gentlemen', 'http://www.brandcrowd.com/gallery/brands/thumbs/thumb14751184306802.jpg')
       const playerToAdd4 = new this.Player(bot4, this.world, challenge, 'right')
       this.world.register(playerToAdd4)
       this.world.leftPlayers.push(playerToAdd4)

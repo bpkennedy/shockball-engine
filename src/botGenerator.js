@@ -24,7 +24,7 @@ export default class BotGenerator {
 
 
   create(teamUid, teamName, teamPicUrl) {
-    const bot = chance.player()
+    const bot = chance.player(teamUid, teamName, teamPicUrl)
     this.bots.push(bot)
     return bot
   }

@@ -143,7 +143,7 @@ export default class Challenge {
       const availableTeammates = rightPlayers.filter(function(player) {
         return player.uid !== passingPlayer.uid
       })
-      playerToPassTo = chance.pickone(rigavailableTeammateshtPlayers, 1)
+      playerToPassTo = chance.pickone(availableTeammates, 1)
       this.record.add(passingPlayer, 'passes ball', this.board.gameTime)
       this.ball.goalProximity++
     }
