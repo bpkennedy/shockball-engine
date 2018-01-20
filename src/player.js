@@ -121,7 +121,7 @@ export default class Player {
   }
 
   tryPass() {
-
+    this.challenge.addTryPass(this)
   }
 
   tryRun(pitch, ball) {

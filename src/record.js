@@ -39,6 +39,9 @@ export default class Record {
       case 'shoots':
         return this.pickRandomPlayerTryScore()
         break;
+      case 'passes ball':
+        return this.pickRandomPlayerTryPass()
+        break;
       default:
         ''
         break;
@@ -74,6 +77,16 @@ export default class Record {
       'fires one toward goal',
       'blasts one towards the opposition goal!',
       'goes for the point, will it happen?'
+    ]
+    return phrases[Math.floor(Math.random()*phrases.length)];
+  }
+
+  pickRandomPlayerTryPass() {
+    const phrases = [
+      'hands off the ball',
+      'crosses the ball',
+      'sends a firm throw to a teammate',
+      'tosses the ball'
     ]
     return phrases[Math.floor(Math.random()*phrases.length)];
   }
