@@ -1,4 +1,5 @@
 import angular from 'angular'
+import angularSpinner from 'angular-svg-round-progressbar'
 import angularJson from 'json-tree2'
 import scrollGlue from 'angularjs-scroll-glue'
 
@@ -13,10 +14,11 @@ import MatchData from './matchData'
 
 const matchData = new MatchData()
 const record = new Record()
+const fps = 3000
 
 let main = new Main(matchData, World, Player, Pitch, Board, Ball, record)
 
-main.beginGame(3000)
+main.beginGame(fps)
 
 // create the front-end ui with angular
 var mainComponent = {
@@ -45,7 +47,7 @@ var mainComponent = {
           $scope.$apply(main)
           ctrl.setViewerRelativeTime()
           console.log(ctrl.gameEvents)
-        }, 3000);
+        }, fps);
       }
     }
   },
@@ -80,10 +82,23 @@ var mainComponent = {
               <div class="leftTeamColor"></div>
             </div>
             <div class="gameTime">
-              <div class="colorBand">
-                <div class="timeSpinner">
-                  {{$ctrl.world[1]['gameTime']}}'
-                </div>
+              <round-progress
+                max="70"
+                current="$ctrl.world[1]['gameTime']"
+                color="#60CA82"
+                bgcolor="#4C505B"
+                radius="30"
+                stroke="5"
+                semi="false"
+                rounded="true"
+                clockwise="true"
+                responsive="false"
+                duration="` + fps + `"
+                animation="linearEase"
+                animation-delay="0">
+              </round-progress>
+              <div class="timeSpinner">
+                {{$ctrl.world[1]['gameTime']}}'
               </div>
             </div>
             <div class="rightTeamScore">
@@ -133,6 +148,6 @@ function backgroundImage(){
   };
 }
 
-angular.module('shockballGame', ['json-tree', 'luegg.directives'])
+angular.module('shockballGame', ['json-tree', 'luegg.directives', 'angular-svg-round-progressbar'])
 .component('main', mainComponent)
 .directive('backImg', backgroundImage)
