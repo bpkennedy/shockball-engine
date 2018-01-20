@@ -1,3 +1,6 @@
+import Chance from 'chance'
+const chance = new Chance()
+
 export default class Challenge {
   constructor(record) {
     this.world = null
@@ -9,6 +12,7 @@ export default class Challenge {
     this.tackleBall = []
     this.playerTryRun = []
     this.playerTryScore = []
+    this.playerTryPass = []
     this.record = record
   }
 
@@ -28,12 +32,16 @@ export default class Challenge {
     if (this.playerTryScore.length) {
       this.resolvePlayerTryScore()
     }
+    if (this.playerTryPass.length) {
+      this.resolvePlayerTryPass()
+    }
   }
 
   reset() {
     this.tackleBall = []
     this.playerTryRun =[]
     this.playerTryScore = []
+    this.playerTryPass = []
   }
 
   addTackleBall(player) {
@@ -46,6 +54,10 @@ export default class Challenge {
 
   addTryScore(player) {
     this.playerTryScore.push(player)
+  }
+
+  addTryPass(player) {
+    this.playerTryPass.push(player)
   }
 
   resolveTackleBall() {
@@ -103,6 +115,39 @@ export default class Challenge {
     this.pitch.lastGoalSide = shootingPlayer.goalSide
     this.pitch.state = 'before_kickoff'
     this.ball.lastSideTouched = null
+  }
+
+  resolvePlayerTryPass() {
+    // player THINKS he can score so he tries.  We will need to transfer the ball possession to another player on success.
+    const theBall = this.ball
+    const leftPlayers = this.leftPlayers.slice()
+    console.log(leftPlayers)
+    const rightPlayers = this.rightPlayers.slice()
+    console.log(rightPlayers)
+    let playerToPassTo = null;
+
+    const passingPlayer = this.playerTryPass.find(function(player) {
+      return player.uid === theBall.possessedBy
+    })
+    
+    //TODO make much better determination here!
+    console.log('Player ' + passingPlayer.uid + ' passes the ball.');
+    if (passingPlayer.goalSide === 'right') {
+      const availableTeammates = leftPlayers.filter(function(player) {
+        return player.uid !== passingPlayer.uid
+      })
+      playerToPassTo = chance.pickone(availableTeammates, 1)
+      this.record.add(passingPlayer, 'passes ball', this.board.gameTime)
+      this.ball.goalProximity++
+    } else {
+      const availableTeammates = rightPlayers.filter(function(player) {
+        return player.uid !== passingPlayer.uid
+      })
+      playerToPassTo = chance.pickone(rigavailableTeammateshtPlayers, 1)
+      this.record.add(passingPlayer, 'passes ball', this.board.gameTime)
+      this.ball.goalProximity++
+    }
+    this.ball.possessedBy = playerToPassTo.uid
   }
 
 }
