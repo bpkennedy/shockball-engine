@@ -20,7 +20,7 @@ export default class Record {
       teamUid: player.teamUid,
       teamName: player.teamName,
       teamPicUrl: player.teamPicUrl,
-      recordRealTime: new Date(),
+      recordRealTime: new Date().toString(),
       recordGameTime: gameTime,
       recordPitchSide: player.goalSide,
       recordType: gameEvent,

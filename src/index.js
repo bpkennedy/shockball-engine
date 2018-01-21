@@ -2,6 +2,7 @@ import angular from 'angular'
 import angularSpinner from 'angular-svg-round-progressbar'
 import angularJson from 'json-tree2'
 import scrollGlue from 'angularjs-scroll-glue'
+const moment = require('moment')
 
 import Main from './main'
 import World from './world'
@@ -15,17 +16,19 @@ import MatchData from './matchData'
 const matchData = new MatchData()
 const record = new Record()
 const fps = 3000
+const maxGameTime = 5
 
 let main = new Main(matchData, World, Player, Pitch, Board, Ball, record)
 
-main.beginGame(fps)
+main.beginGame(fps, maxGameTime)
 
 // create the front-end ui with angular
 var mainComponent = {
-  controller: function ($scope){
+  controller: function ($scope, $interval){
     var ctrl = this;
     ctrl.isRunning = false;
     ctrl.game = main;
+    ctrl.gameInterval = null;
     ctrl.world = ctrl.game.world.objects;
     ctrl.leftPlayers = ctrl.game.world.leftPlayers;
     ctrl.rightPlayers = ctrl.game.world.rightPlayers;
@@ -33,22 +36,25 @@ var mainComponent = {
     ctrl.matchViewerRelativeTime = 'ON LIVE';
     ctrl.setViewerRelativeTime = function() {
       if (ctrl.game.stopSim) {
-        ctrl.matchViewerRelativeTime = ctrl.world[1]['startTime']
+        ctrl.matchViewerRelativeTime = moment(ctrl.world[1]['startTime']).format('MMMM Do YYYY, h:mm:ss');
         ctrl.isRunning = false;
+        ctrl.stopGameInterval();
       }
     },
-    ctrl.someMethod = function (event) {
-      ctrl.api = event.message;
-    };
     ctrl.$onInit = function() {
       if (!ctrl.isRunning) {
         ctrl.isRunning = true;
-        setInterval(function() {
-          $scope.$apply(main)
-          ctrl.setViewerRelativeTime()
-          console.log(ctrl.gameEvents)
-        }, fps);
+        ctrl.startGameInterval();
       }
+    },
+    // stops the interval
+    ctrl.stopGameInterval = function() {
+      $interval.cancel(ctrl.gameInterval);
+    },
+    ctrl.startGameInterval = function() {
+      ctrl.stopGameInterval();
+      ctrl.gameInterval = $interval(ctrl.setViewerRelativeTime, fps);
+
     }
   },
   template: `
@@ -83,7 +89,7 @@ var mainComponent = {
             </div>
             <div class="gameTime">
               <round-progress
-                max="70"
+                max="` + maxGameTime + `"
                 current="$ctrl.world[1]['gameTime']"
                 color="#60CA82"
                 bgcolor="#4C505B"

@@ -15,7 +15,8 @@
     "angularjs-scroll-glue": "^2.2.0",
     "chance": "^1.0.13",
     "json-tree2": "^0.1.5",
-    "live-server": "^1.2.0"
+    "live-server": "^1.2.0",
+    "moment": "^2.20.1"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

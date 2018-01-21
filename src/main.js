@@ -12,6 +12,7 @@ export default class Main {
     this.now = Date.now()
     this.then = Date.now()
     this.fps = 1000
+    this.maxGameTime = 70
     this.elapsed = null
     this.matchData = matchData
     this.World = World
@@ -23,10 +24,11 @@ export default class Main {
     this.counter = 0
   }
 
-  beginGame(framesPerSecond) {
+  beginGame(framesPerSecond, maxGameTime) {
     if (util.getType(framesPerSecond) === '[object Number]') {
       challenge = new Challenge(this.record)
       this.fps = framesPerSecond
+      this.maxGameTime = maxGameTime ? maxGameTime : this.maxGameTime
       //register world
       this.world = new this.World()
       
@@ -35,7 +37,7 @@ export default class Main {
       this.world.register(pitch)
       
       //register scoreboard
-      const board = new this.Board(pitch)
+      const board = new this.Board(pitch, this.maxGameTime)
       this.world.register(board)
       
       //register ball
@@ -107,6 +109,15 @@ export default class Main {
       // this.stopSim = true
     }
     // console.log('counter is: ' + this.counter )
+    if (this.world.objects[1]['gameTime'] === 5) {
+      this.stopSim = true
+      this.writeMatchRecords();
+    }
+  }
+
+  writeMatchRecords() {
+    console.log('match is over, lets write our records to the database here.  All match data should be: ')
+    console.log(this.record)
   }
 
 }
