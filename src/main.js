@@ -109,7 +109,7 @@ export default class Main {
       // this.stopSim = true
     }
     // console.log('counter is: ' + this.counter )
-    if (this.world.objects[1]['gameTime'] === 5) {
+    if (this.world.objects[1]['gameTime'] === this.maxGameTime) {
       this.stopSim = true
       this.writeMatchRecords();
     }

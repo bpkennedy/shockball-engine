@@ -10,9 +10,14 @@ chance.mixin({
       teamUid: teamUid,
       teamName: teamName,
       teamPicUrl: teamPicUrl,
+      role: chance.pickone(['Guard', 'Center', 'Wing']),
       passing: chance.integer({ min: 0, max: 30 }),
       toughness: chance.integer({ min: 0, max: 30 }),
-      throwing: chance.integer({ min: 0, max: 30 })
+      throwing: chance.integer({ min: 0, max: 30 }),
+      fatigue: chance.integer({ min: 0, max: 30 }),
+      endurance: chance.integer({ min: 0, max: 100 }),
+      vision: chance.integer({ min: 0, max: 30}),
+      blocking: chance.integer({ min: 0, max: 30})
     }
   }
 })

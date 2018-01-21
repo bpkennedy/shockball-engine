@@ -16,7 +16,7 @@ import MatchData from './matchData'
 const matchData = new MatchData()
 const record = new Record()
 const fps = 3000
-const maxGameTime = 5
+const maxGameTime = 70
 
 let main = new Main(matchData, World, Player, Pitch, Board, Ball, record)
 

@@ -17,6 +17,8 @@ export default class Record {
       actorFirstName: player.firstName,
       actorLastName: player.lastName,
       actorPicUrl: player.picUrl,
+      opposingActorUid: player.opposingActorUid || undefined,
+      opposingActorFirstName: player.opposingActorFirstName || undefined,
       teamUid: player.teamUid,
       teamName: player.teamName,
       teamPicUrl: player.teamPicUrl,
@@ -24,11 +26,11 @@ export default class Record {
       recordGameTime: gameTime,
       recordPitchSide: player.goalSide,
       recordType: gameEvent,
-      recordCommentator: this.getCommentatorText(gameEvent)
+      recordCommentator: this.getCommentatorText(player, gameEvent)
     })
   }
 
-  getCommentatorText(gameEvent) {
+  getCommentatorText(player, gameEvent) {
     switch(gameEvent) {
       case 'tackles ball':
         return this.pickRandomTackleBall()
@@ -41,6 +43,15 @@ export default class Record {
         break;
       case 'passes ball':
         return this.pickRandomPlayerTryPass()
+        break;
+      case 'goal':
+        return this.pickRandomPlayerGoal(player)
+        break;
+      case 'goal blocked':
+        return this.pickRandomPlayerGoalBlocked(player)
+        break;
+      case 'pass blocked':
+        return this.pickRandomPlayerPassBlocked(player)
         break;
       default:
         ''
@@ -81,12 +92,44 @@ export default class Record {
     return phrases[Math.floor(Math.random()*phrases.length)];
   }
 
+  pickRandomPlayerGoal() {
+    const phrases = [
+      'rockets one into the pit!',
+      'what a throw! It\'s in!',
+      'and it\'s a great score!',
+      'just slides by and in! Score!',
+      `${player.opposingActorFirstName} couldn't stop the goal, mark one for ${player.teamName}!`,
+      `slams the shockball past ${player.opposingActorFirstName} for the score!`
+    ]
+    return phrases[Math.floor(Math.random()*phrases.length)];
+  }
+
+  pickRandomPlayerGoalBlocked(player) {
+    const phrases = [
+      `good try by ${player.opposingActorFirstName} but ${player.firstName} managed to block the shot`,
+      `massive save against ${player.opposingActorFirstName}`,
+      `blocks ${player.opposingActorFirstName}'s shot with ease`,
+      `manages to get in front of a heater from ${player.opposingActorFirstName}`
+    ]
+    return phrases[Math.floor(Math.random()*phrases.length)];
+  }
+
   pickRandomPlayerTryPass() {
     const phrases = [
       'hands off the ball',
       'crosses the ball',
       'sends a firm throw to a teammate',
       'tosses the ball'
+    ]
+    return phrases[Math.floor(Math.random()*phrases.length)];
+  }
+
+  pickRandomPlayerPassBlocked(player) {
+    const phrases = [
+      `bats the shockball awary from ${player.opposingActorFirstName}`,
+      `deflects the pass from ${player.opposingActorFirstName}`,
+      `blocks ${player.opposingActorFirstName}'s pass with ease`,
+      `${player.opposingActorFirstName}'s pass is easily batted away`
     ]
     return phrases[Math.floor(Math.random()*phrases.length)];
   }
