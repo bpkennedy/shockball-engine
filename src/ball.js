@@ -9,11 +9,8 @@ export default class Ball {
   }
 
   update() {
-    console.log('Goal proximity is: ' + this.goalProximity)
     if (this.possessedBy === null) {
-      console.log('No-one has the ball')
     } else {
-      console.log("Player " + this.possessedBy + " has the ball")
     }
   }
 
