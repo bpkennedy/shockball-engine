@@ -180,15 +180,12 @@ main > div {
 
 .timeline ul li::after {
     content: '';
-    position: absolute;
     left: 50%;
     bottom: 0;
     transform: translateX(-50%);
     width: 40px;
     height: 40px;
-    border-radius: 50%;
     background: #ffffff;
-    border: 3px solid #60C984;
 }
 
 .timeline ul li > div {
@@ -225,8 +222,6 @@ main > div {
 
 .timeline ul li.left > div::before {
     right: -15px;
-    /* border-width: 8px 0 8px 16px; */
-    /* border-color: transparent transparent transparent #F45B69; */
 }
 
 li.right .eventTime {
@@ -271,4 +266,82 @@ li.left .eventTime {
 .eventText {
     color: #b9b9b9;
     margin-top: -10px;
+}
+
+.shot:before {
+    content: "\f111";
+    font-family: "FontAwesome";
+    position: absolute;
+    top: 74px;
+    z-index: 2;
+    left: -22px;
+    color: #212531;
+    border: 3px solid #60CA82;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+    background-color: #ffffff;
+}
+
+.pass:before {
+    content: "\f178";
+    font-family: "FontAwesome";
+    position: absolute;
+    top: 74px;
+    z-index: 2;
+    left: -22px;
+    border: 3px solid #60CA82;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+    background-color: #ffffff;
+}
+.run:before {
+    content: "\f176";
+    font-family: "FontAwesome";
+    position: absolute;
+    top: 74px;
+    z-index: 2;
+    left: -22px;
+    border: 3px solid #60CA82;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+    background-color: #ffffff;
+}
+.tackle:before {
+    content: "\f0e7";
+    font-family: "FontAwesome";
+    position: absolute;
+    top: 74px;
+    z-index: 2;
+    left: -22px;
+    border: 3px solid #60CA82;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+    background-color: #ffffff;
+}
+.sub:before {
+    content: "\f111";
+    font-family: "FontAwesome";
+    position: absolute;
+    top: 74px;
+    z-index: 2;
+    left: -22px;
+    border: 3px solid #60CA82;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+    background-color: #ffffff;
 }

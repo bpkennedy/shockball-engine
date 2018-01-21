@@ -109,7 +109,14 @@ var mainComponent = {
         </div>
         <div class="timeline">
           <ul scroll-glue>
-            <li ng-repeat="event in $ctrl.gameEvents" ng-class="::event.recordPitchSide">
+            <li ng-repeat="event in $ctrl.gameEvents" ng-class="{
+                right: event.recordPitchSide === 'right',
+                left: event.recordPitchSide === 'left',
+                shot: event.recordType === 'shoots',
+                pass: event.recordType === 'passes ball',
+                run: event.recordType === 'runs ball',
+                tackle: event.recordType === 'tackles ball'
+              }" class="play">
               <div class="eventTime">{{::event.recordGameTime}}'</div>
               <div class="event-info">
                 <div class="name">{{::event.actorFirstName}}</div>
