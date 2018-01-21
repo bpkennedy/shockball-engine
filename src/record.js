@@ -24,7 +24,7 @@ export default class Record {
       teamPicUrl: player.teamPicUrl,
       recordRealTime: new Date().toString(),
       recordGameTime: gameTime,
-      recordPitchSide: player.goalSide,
+      recordPitchSide: player.homeGoalSide,
       recordType: gameEvent,
       recordCommentator: this.getCommentatorText(player, gameEvent)
     })
@@ -92,7 +92,7 @@ export default class Record {
     return phrases[Math.floor(Math.random()*phrases.length)];
   }
 
-  pickRandomPlayerGoal() {
+  pickRandomPlayerGoal(player) {
     const phrases = [
       'rockets one into the pit!',
       'what a throw! It\'s in!',

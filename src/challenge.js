@@ -26,13 +26,13 @@ export default class Challenge {
     if (this.tackleBall.length) {
       this.resolveTackleBall()
     }
-    if (this.playerTryRun.length) {
+    if (this.playerTryRun.length > 0) {
       this.resolvePlayerRun()
     }
-    if (this.playerTryScore.length) {
+    if (this.playerTryScore.length > 0) {
       this.resolvePlayerTryScore()
     }
-    if (this.playerTryPass.length) {
+    if (this.playerTryPass.length > 0) {
       this.resolvePlayerTryPass()
     }
   }
@@ -75,8 +75,8 @@ export default class Challenge {
     })
     this.record.add(winningPlayer, 'tackles ball', this.board.gameTime)
     this.ball.possess(winningPlayer.uid)
-    this.ball.lastSideTouched = winningPlayer.goalSide
-    this.ball.lastPlayerTouched = this.uid
+    this.ball.lastSideTouched = winningPlayer.homeGoalSide
+    this.ball.lastPlayerTouched = winningPlayer.uid
   }
 
   resolvePlayerRun() {
@@ -87,15 +87,16 @@ export default class Challenge {
       return player.uid === theBall.possessedBy
     })
 
-    if (Math.abs(this.ball.goalProximity) < Math.abs(this.pitch.goalPit[runningPlayer.goalSide])) {
-      if (runningPlayer.goalSide === 'right') {
+    if (Math.abs(this.ball.goalProximity) < Math.abs(this.pitch.goalPit[runningPlayer.homeGoalSide])) {
+      if (runningPlayer.homeGoalSide === 'right') {
         this.record.add(runningPlayer, 'runs ball', this.board.gameTime)
         this.ball.goalProximity--
-      } else if (runningPlayer.goalSide === 'left') {
+      } else if (runningPlayer.homeGoalSide === 'left') {
         this.record.add(runningPlayer, 'runs ball', this.board.gameTime)
         this.ball.goalProximity++
       }
     } else {
+      console.log('in this player run else')
     }
   }
 
@@ -106,7 +107,7 @@ export default class Challenge {
     const shootingPlayer = this.playerTryScore.find(function(player) {
       return player.uid === theBall.possessedBy
     })
-    const attackingSide = shootingPlayer.goalSide
+    const attackingSide = shootingPlayer.homeGoalSide === 'left' ? 'right' : 'left'
     
     //this is the shot attempt, make a record
     this.record.add(shootingPlayer, 'shoots', this.board.gameTime)
@@ -118,31 +119,38 @@ export default class Challenge {
     if (probability < 0.4) {
       // Guard tries block action and if he fails, shooter is able to shoot
       opposingPlayer = this.playerTryScore.find(function(player) {
-        return player.goalSide !== attackingSide && player.role === 'Guard'
+        return player.homeGoalSide !== attackingSide && player.role === 'Guard'
       })
     } else if (probability < 0.6) {
       // Wing tries block action and if he fails, shooter is able to shoot 
       opposingPlayer = this.playerTryScore.find(function(player) {
-        return player.goalSide !== attackingSide && player.role === 'Wing'
+        return player.homeGoalSide !== attackingSide && player.role === 'Wing'
       })
     } else {
       // Center tries block action and if he fails, shooter is able to shoot 
       opposingPlayer = this.playerTryScore.find(function(player) {
-        return player.goalSide !== attackingSide && player.role === 'Center'
+        return player.homeGoalSide !== attackingSide && player.role === 'Center'
+      })
+    }
+
+    //we handle here if generated bots by chance didn't have the right positions (I am not enforcing alwaysa  Guard, Wing, Center)
+    if (!opposingPlayer) {
+      opposingPlayer = this.playerTryScore.find(function(player) {
+        return player.homeGoalSide !== attackingSide
       })
     }
 
     const shootingScore = shootingPlayer.throwing + shootingPlayer.vision + chance.rpg('2d6', {sum:true})
     const blockingScore = opposingPlayer.blocking + opposingPlayer.vision + chance.rpg('2d6', {sum:true}) 
 
-    if (shootingScore > blockingScore) {
+    if (shootingScore > blockingScore || shootingPlayer === opposingPlayer) {
       // shooter scores
       shootingPlayer.opposingActorUid = opposingPlayer.uid
       shootingPlayer.opposingActorFirstName = opposingPlayer.firstName
       this.record.add(shootingPlayer, 'goal', this.board.gameTime)
       this.ball.reset()
-      this.board.addScore(shootingPlayer.goalSide)
-      this.pitch.lastGoalSide = shootingPlayer.goalSide
+      this.board.addScore(shootingPlayer.homeGoalSide)
+      this.pitch.lastGoalSide = shootingPlayer.homeGoalSide
       this.pitch.state = 'before_kickoff'
       this.ball.lastSideTouched = null
     } else {
@@ -151,7 +159,7 @@ export default class Challenge {
       opposingPlayer.opposingActorFirstName = shootingPlayer.firstName
       this.record.add(opposingPlayer, 'goal blocked', this.board.gameTime)
       this.ball.possessedBy = null
-      this.ball.lastSideTouched = opposingPlayer.goalSide
+      this.ball.lastSideTouched = opposingPlayer.homeGoalSide
     }
     
 
@@ -168,9 +176,13 @@ export default class Challenge {
     const passingPlayer = this.playerTryPass.find(function(player) {
       return player.uid === theBall.possessedBy
     })
-    
+
+    if (!passingPlayer) {
+      //we need to return because ball has been fumbled and noone possesses it
+      return
+    }
     //TODO make much better determination here!
-    if (passingPlayer.goalSide === 'right') {
+    if (passingPlayer.homeGoalSide === 'right') {
       const availableTeammates = leftPlayers.filter(function(player) {
         return player.uid !== passingPlayer.uid
       })
@@ -183,7 +195,7 @@ export default class Challenge {
       })
       playerToPassTo = chance.pickone(availableTeammates, 1)
       this.record.add(passingPlayer, 'passes ball', this.board.gameTime)
-      this.ball.goalProximity++
+      this.ball.goalProximity--
     }
     this.ball.possessedBy = playerToPassTo.uid
   }

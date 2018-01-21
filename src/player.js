@@ -2,7 +2,7 @@ import Util from './util'
 const util = new Util()
 
 export default class Player {
-  constructor(playerStats, world, challenge, goalSide) {
+  constructor(playerStats, world, challenge, homeGoalSide) {
     if (util.getType(playerStats) === '[object Object]') {
       this.uid = playerStats.uid
       this.firstName = playerStats.firstName
@@ -19,7 +19,7 @@ export default class Player {
       this.endurance = playerStats.endurance
       this.vision = playerStats.vision
       this.blocking = playerStats.blocking
-      this.goalSide = goalSide
+      this.homeGoalSide = homeGoalSide
       this.challenge = challenge
       this.realWorldModel = world
       this.playerWorldModel = {
@@ -79,6 +79,12 @@ export default class Player {
     const pitch = gameObjects[0]
     const board = gameObjects[1]
     const ball = gameObjects[2]
+
+    console.log('states are ')
+    console.log(pitch.state)
+    console.log(ball.possessedBy)
+    console.log(ball.lastSideTouched)
+    console.log('this player side is ' + this.homeGoalSide)
     if (pitch.state === 'before_kickoff') {
       // we are before kickoff so player wants to get the ball
       this.tryTackleBall()
@@ -105,15 +111,17 @@ export default class Player {
           return
         }
       }
-    } else if (pitch.state === 'play_on' && ball.possessedBy !== null && ball.lastSideTouched === this.goalSide) {
+    } else if (pitch.state === 'play_on' && ball.possessedBy !== null && ball.lastSideTouched === this.homeGoalSide) {
       // Ball is being carried by a player of my team
-    } else if (pitch.state === 'play_on' && ball.possessedBy !== null && ball.lastSideTouched !== this.goalSide) {
+      console.log('ball is being carried by my team?')
+    } else if (pitch.state === 'play_on' && ball.possessedBy !== null && ball.lastSideTouched !== this.homeGoalSide) {
       // Ball is being carried by a player of other team
+      console.log('ball is being carried by team other than me?')
+      console.log(this)
       // for now the Player chooses to either block a shot or block a pass
-      console.log('becore decisions in Player class I check status of playerWorldModel')
       console.log(this.playerWorldModel)
       let thinksMoreLikelyToShoot = null;
-      if (this.goalSide === 'right') {
+      if (this.homeGoalSide === 'right') {
         console.log('I am ' + this.uid)
         console.log('goal is on the right')
         thinksMoreLikelyToShoot = this.analyzeMoreLikelyToShoot(this.playerWorldModel.leftPlayers, ball)
@@ -136,13 +144,12 @@ export default class Player {
   }
 
   analyzeMoreLikelyToShoot(players, ball) {
-    console.log(ball)
-    console.log(players)
+    //this is correctly working
     const ballCarrier = players.find(function(player) {
       return player.uid === ball.possessedBy
     })
     //simple determinatin right now - if throwing higher than passing, then this player assumes they'll shoot
-    if (ballCarrier.throwing > ballCarrier.passing) {
+    if (ballCarrier && ballCarrier.throwing > ballCarrier.passing) {
       return true
     } else {
       return false
@@ -150,8 +157,8 @@ export default class Player {
   }
 
   analyzeCanScore(ball, pitch) {
-    const targetGoalResistence = Math.abs(pitch.goalResistence[this.goalSide])
-    const absoluteGoalPit = Math.abs(pitch.goalPit[this.goalSide])
+    const targetGoalResistence = Math.abs(pitch.goalResistence[this.homeGoalSide])
+    const absoluteGoalPit = Math.abs(pitch.goalPit[this.homeGoalSide])
     if (absoluteGoalPit - Math.abs(ball.goalProximity) < targetGoalResistence) {
       return true
     } else {
