@@ -131,15 +131,6 @@ var mainComponent = {
               </div>
               <div class="eventText">{{::event.recordCommentator}}</div>
             </li>
-           <!-- <li class="left">
-              <div class="eventTime">24'</div>
-              <div class="event-info">
-                <div class="name">Yan</div>
-                <div class="middleDot">&middot;</div>
-                <div class="action">shoots</div>
-              </div>
-              <div class="eventText">tries for a quick shot!</div>
-            </li> -->
           </ul>
         </div>
       </div>

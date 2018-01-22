@@ -79,12 +79,6 @@ export default class Player {
     const pitch = gameObjects[0]
     const board = gameObjects[1]
     const ball = gameObjects[2]
-
-    console.log('states are ')
-    console.log(pitch.state)
-    console.log(ball.possessedBy)
-    console.log(ball.lastSideTouched)
-    console.log('this player side is ' + this.homeGoalSide)
     if (pitch.state === 'before_kickoff') {
       // we are before kickoff so player wants to get the ball
       this.tryTackleBall()
@@ -113,29 +107,19 @@ export default class Player {
       }
     } else if (pitch.state === 'play_on' && ball.possessedBy !== null && ball.lastSideTouched === this.homeGoalSide) {
       // Ball is being carried by a player of my team
-      console.log('ball is being carried by my team?')
     } else if (pitch.state === 'play_on' && ball.possessedBy !== null && ball.lastSideTouched !== this.homeGoalSide) {
       // Ball is being carried by a player of other team
-      console.log('ball is being carried by team other than me?')
-      console.log(this)
       // for now the Player chooses to either block a shot or block a pass
-      console.log(this.playerWorldModel)
       let thinksMoreLikelyToShoot = null;
       if (this.homeGoalSide === 'right') {
-        console.log('I am ' + this.uid)
-        console.log('goal is on the right')
         thinksMoreLikelyToShoot = this.analyzeMoreLikelyToShoot(this.playerWorldModel.leftPlayers, ball)
       } else {
-        console.log('I am ' + this.uid)
-        console.log('goalside is on the left')
         thinksMoreLikelyToShoot = this.analyzeMoreLikelyToShoot(this.playerWorldModel.rightPlayers, ball)
       }
       
       if (thinksMoreLikelyToShoot) {
-        console.log('i made a choice about blocking shot')
         this.tryBlockShot()
       } else {
-        console.log('i made a choice about blocking pass')
         this.tryBlockPass()
       }
     } else if (pitch.state === 'play_on' && ball.possessedBy === null) {
@@ -158,11 +142,18 @@ export default class Player {
 
   analyzeCanScore(ball, pitch) {
     const targetGoalResistence = Math.abs(pitch.goalResistence[this.homeGoalSide])
-    const absoluteGoalPit = Math.abs(pitch.goalPit[this.homeGoalSide])
-    if (absoluteGoalPit - Math.abs(ball.goalProximity) < targetGoalResistence) {
-      return true
+    if (this.homeGoalSide === 'left') {
+      if (Math.abs(pitch.goalPit['left'] - ball.goalProximity) < targetGoalResistence) {
+        return true
+      } else {
+        return false
+      }
     } else {
-      return false
+      if (Math.abs(pitch.goalPit['right'] - ball.goalProximity) < targetGoalResistence) {
+        return true
+      } else {
+        return false
+      }
     }
   }
 
@@ -191,10 +182,12 @@ export default class Player {
   }
 
   tryBlockPass() {
+    console.log(this.firstName + ' tried blocking a pass')
     this.challenge.addTryPass(this)
   }
 
   tryBlockShot() {
+    console.log(this.firstName + ' tried blocking shot')
     this.challenge.addTryScore(this)
   }
 

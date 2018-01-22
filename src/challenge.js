@@ -17,13 +17,14 @@ export default class Challenge {
   }
 
   update(world) {
+    console.log('challenge update was called')
     this.world = world
     this.pitch = this.world.objects[0]
     this.board = this.world.objects[1]
     this.ball = this.world.objects[2]
     this.leftPlayers = this.world.leftPlayers
     this.rightPlayers = this.world.rightPlayers
-    if (this.tackleBall.length) {
+    if (this.tackleBall.length > 0) {
       this.resolveTackleBall()
     }
     if (this.playerTryRun.length > 0) {
@@ -89,9 +90,11 @@ export default class Challenge {
 
     if (Math.abs(this.ball.goalProximity) < Math.abs(this.pitch.goalPit[runningPlayer.homeGoalSide])) {
       if (runningPlayer.homeGoalSide === 'right') {
+        console.log('running left')
         this.record.add(runningPlayer, 'runs ball', this.board.gameTime)
         this.ball.goalProximity--
       } else if (runningPlayer.homeGoalSide === 'left') {
+        console.log('running right')
         this.record.add(runningPlayer, 'runs ball', this.board.gameTime)
         this.ball.goalProximity++
       }
@@ -107,6 +110,12 @@ export default class Challenge {
     const shootingPlayer = this.playerTryScore.find(function(player) {
       return player.uid === theBall.possessedBy
     })
+
+    if (!shootingPlayer) {
+      // if there is no shooting player then it could be because the ballhandler didn't actually try to shoot (thus isn't in the array) but a player THOUGHT
+      // that he might based on their playerWorldModel understanding!  Basically he got it wrong.  :).  So we return out of this function altogether.
+      return
+    }
     const attackingSide = shootingPlayer.homeGoalSide === 'left' ? 'right' : 'left'
     
     //this is the shot attempt, make a record
@@ -119,25 +128,24 @@ export default class Challenge {
     if (probability < 0.4) {
       // Guard tries block action and if he fails, shooter is able to shoot
       opposingPlayer = this.playerTryScore.find(function(player) {
-        return player.homeGoalSide !== attackingSide && player.role === 'Guard'
+        return player.homeGoalSide === attackingSide && player.role === 'Guard'
       })
     } else if (probability < 0.6) {
       // Wing tries block action and if he fails, shooter is able to shoot 
       opposingPlayer = this.playerTryScore.find(function(player) {
-        return player.homeGoalSide !== attackingSide && player.role === 'Wing'
+        return player.homeGoalSide === attackingSide && player.role === 'Wing'
       })
     } else {
       // Center tries block action and if he fails, shooter is able to shoot 
       opposingPlayer = this.playerTryScore.find(function(player) {
-        return player.homeGoalSide !== attackingSide && player.role === 'Center'
+        return player.homeGoalSide === attackingSide && player.role === 'Center'
       })
     }
 
     //we handle here if generated bots by chance didn't have the right positions (I am not enforcing alwaysa  Guard, Wing, Center)
     if (!opposingPlayer) {
-      opposingPlayer = this.playerTryScore.find(function(player) {
-        return player.homeGoalSide !== attackingSide
-      })
+      //kinda hacky!
+      opposingPlayer = shootingPlayer
     }
 
     const shootingScore = shootingPlayer.throwing + shootingPlayer.vision + chance.rpg('2d6', {sum:true})
@@ -148,30 +156,28 @@ export default class Challenge {
       shootingPlayer.opposingActorUid = opposingPlayer.uid
       shootingPlayer.opposingActorFirstName = opposingPlayer.firstName
       this.record.add(shootingPlayer, 'goal', this.board.gameTime)
-      this.ball.reset()
+      theBall.reset()
       this.board.addScore(shootingPlayer.homeGoalSide)
       this.pitch.lastGoalSide = shootingPlayer.homeGoalSide
       this.pitch.state = 'before_kickoff'
-      this.ball.lastSideTouched = null
+      theBall.lastSideTouched = null
     } else {
       // shooter is blocked
       opposingPlayer.opposingActorUid = shootingPlayer.uid
       opposingPlayer.opposingActorFirstName = shootingPlayer.firstName
       this.record.add(opposingPlayer, 'goal blocked', this.board.gameTime)
-      this.ball.possessedBy = null
-      this.ball.lastSideTouched = opposingPlayer.homeGoalSide
+      theBall.possessedBy = opposingPlayer.uid
+      theBall.lastSideTouched = opposingPlayer.homeGoalSide
     }
-    
-
 
   }
 
   resolvePlayerTryPass() {
-    // player THINKS he can score so he tries.  We will need to transfer the ball possession to another player on success.
+    // player THINKS he can pass so he tries.  We will need to transfer the ball possession to another player on success.
     const theBall = this.ball
     const leftPlayers = this.leftPlayers.slice()
     const rightPlayers = this.rightPlayers.slice()
-    let playerToPassTo = null;
+    let playerToWinPossession = null;
 
     const passingPlayer = this.playerTryPass.find(function(player) {
       return player.uid === theBall.possessedBy
@@ -181,23 +187,66 @@ export default class Challenge {
       //we need to return because ball has been fumbled and noone possesses it
       return
     }
+
     //TODO make much better determination here!
-    if (passingPlayer.homeGoalSide === 'right') {
-      const availableTeammates = leftPlayers.filter(function(player) {
-        return player.uid !== passingPlayer.uid
+    const attackingSide = passingPlayer.homeGoalSide === 'left' ? 'right' : 'left'
+    var probability = Math.random()
+    let opposingPlayer = undefined
+    if (probability < 0.4) {
+      // Guard tries block action and if he fails, shooter is able to shoot
+      opposingPlayer = this.playerTryPass.find(function(player) {
+        return player.homeGoalSide === attackingSide && player.role === 'Guard'
       })
-      playerToPassTo = chance.pickone(availableTeammates, 1)
-      this.record.add(passingPlayer, 'passes ball', this.board.gameTime)
-      this.ball.goalProximity++
+    } else if (probability < 0.6) {
+      // Wing tries block action and if he fails, shooter is able to shoot 
+      opposingPlayer = this.playerTryPass.find(function(player) {
+        return player.homeGoalSide === attackingSide && player.role === 'Wing'
+      })
     } else {
-      const availableTeammates = rightPlayers.filter(function(player) {
-        return player.uid !== passingPlayer.uid
+      // Center tries block action and if he fails, shooter is able to shoot 
+      opposingPlayer = this.playerTryPass.find(function(player) {
+        return player.homeGoalSide === attackingSide && player.role === 'Center'
       })
-      playerToPassTo = chance.pickone(availableTeammates, 1)
-      this.record.add(passingPlayer, 'passes ball', this.board.gameTime)
-      this.ball.goalProximity--
     }
-    this.ball.possessedBy = playerToPassTo.uid
+
+    //we handle here if generated bots by chance didn't have the right positions (I am not enforcing always a Guard, Wing, Center)
+    if (!opposingPlayer) {
+      //kinda hacky!
+      opposingPlayer = passingPlayer
+    }
+
+    const passingScore = passingPlayer.passing + passingPlayer.vision + chance.rpg('2d6', {sum:true})
+    const blockingScore = opposingPlayer.blocking + opposingPlayer.vision + chance.rpg('2d6', {sum:true})
+    console.log('passingScore is ' + passingScore)
+    console.log('blocking score is ' + blockingScore)
+
+
+    if (passingScore > blockingScore || passingPlayer === opposingPlayer) {
+      //pass will be successful, now choose what teammate to pass to
+      if (passingPlayer.homeGoalSide === 'right') {
+        const availableTeammates = rightPlayers.filter(function(player) {
+          return player.uid !== passingPlayer.uid
+        })
+        playerToWinPossession = chance.pickone(availableTeammates, 1)
+        this.record.add(passingPlayer, 'passes ball', this.board.gameTime)
+        theBall.goalProximity++
+      } else {
+        const availableTeammates = leftPlayers.filter(function(player) {
+          return player.uid !== passingPlayer.uid
+        })
+        playerToWinPossession = chance.pickone(availableTeammates, 1)
+        this.record.add(passingPlayer, 'passes ball', this.board.gameTime)
+        theBall.goalProximity--
+      }
+    } else {
+      //passer is blocked
+      this.record.add(opposingPlayer, 'pass blocked', this.board.gameTime)
+      playerToWinPossession = opposingPlayer
+      theBall.lastSideTouched = opposingPlayer.homeGoalSide
+
+    }
+
+    theBall.possessedBy = playerToWinPossession.uid
   }
 
 }
