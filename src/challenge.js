@@ -17,7 +17,6 @@ export default class Challenge {
   }
 
   update(world) {
-    console.log('challenge update was called')
     this.world = world
     this.pitch = this.world.objects[0]
     this.board = this.world.objects[1]
@@ -90,11 +89,9 @@ export default class Challenge {
 
     if (Math.abs(this.ball.goalProximity) < Math.abs(this.pitch.goalPit[runningPlayer.homeGoalSide])) {
       if (runningPlayer.homeGoalSide === 'right') {
-        console.log('running left')
         this.record.add(runningPlayer, 'runs ball', this.board.gameTime)
         this.ball.goalProximity--
       } else if (runningPlayer.homeGoalSide === 'left') {
-        console.log('running right')
         this.record.add(runningPlayer, 'runs ball', this.board.gameTime)
         this.ball.goalProximity++
       }
@@ -217,9 +214,6 @@ export default class Challenge {
 
     const passingScore = passingPlayer.passing + passingPlayer.vision + chance.rpg('2d6', {sum:true})
     const blockingScore = opposingPlayer.blocking + opposingPlayer.vision + chance.rpg('2d6', {sum:true})
-    console.log('passingScore is ' + passingScore)
-    console.log('blocking score is ' + blockingScore)
-
 
     if (passingScore > blockingScore || passingPlayer === opposingPlayer) {
       //pass will be successful, now choose what teammate to pass to

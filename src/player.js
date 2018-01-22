@@ -182,12 +182,10 @@ export default class Player {
   }
 
   tryBlockPass() {
-    console.log(this.firstName + ' tried blocking a pass')
     this.challenge.addTryPass(this)
   }
 
   tryBlockShot() {
-    console.log(this.firstName + ' tried blocking shot')
     this.challenge.addTryScore(this)
   }
 
