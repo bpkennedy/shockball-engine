@@ -12,13 +12,17 @@ export default class Record {
   }
 
   add(player, gameEvent, gameTime) {
+
+    player.opposingActorUid = player.opposingActorUid ? player.opposingActorUid : 'somebody'
+    player.opposingActorFirstName = player.opposingActorFirstName ? player.opposingActorFirstName : 'somebody'
+    
     this.records.push({
       actorUid: player.uid,
       actorFirstName: player.firstName,
       actorLastName: player.lastName,
       actorPicUrl: player.picUrl,
-      opposingActorUid: player.opposingActorUid || undefined,
-      opposingActorFirstName: player.opposingActorFirstName || undefined,
+      opposingActorUid: player.opposingActorUid,
+      opposingActorFirstName: player.opposingActorFirstName,
       teamUid: player.teamUid,
       teamName: player.teamName,
       teamPicUrl: player.teamPicUrl,
