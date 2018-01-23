@@ -36,9 +36,6 @@ export default class Challenge {
     if (this.playerTryPass.length > 0) {
       this.resolvePlayerTryPass()
     }
-    // if (this.playerTryTackle.length > 0) {
-    //   this.resolvePlayerTryTackle()
-    // }
   }
 
   reset() {
@@ -87,13 +84,6 @@ export default class Challenge {
     this.ball.lastSideTouched = winningPlayer.homeGoalSide
     this.ball.lastPlayerTouched = winningPlayer.uid
   }
-
-  // resolvePlayerTryTackle() {
-  //   const theBall = this.ball
-  //   const ballHandler = this.playerTryTackle.find(function(player) {
-  //     return player.uid === theBall.possessedBy
-  //   })
-  // }
 
   resolvePlayerRun() {
     // here the player THINKS he can ran, but in reality he'd have challengers.
