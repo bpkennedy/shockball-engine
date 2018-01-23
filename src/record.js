@@ -69,7 +69,7 @@ export default class Record {
   pickRandomTackleBall() {
     const phrases = [
       'crashes in and emerges with the ball',
-      'struggles to get free, but he has the ball now!',
+      'struggles to get free, but has the ball now!',
       'wins the tackle for the ball',
       'roughs up the opponent for the ball',
       'deftly snipes the ball from the opposition!'

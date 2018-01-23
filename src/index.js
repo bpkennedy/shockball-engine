@@ -121,7 +121,11 @@ var mainComponent = {
                 shot: event.recordType === 'shoots',
                 pass: event.recordType === 'passes ball',
                 run: event.recordType === 'runs ball',
-                tackle: event.recordType === 'tackles ball'
+                tackleBall: event.recordType === 'tackles ball',
+                tacklePlayer: event.recordType === 'tackles',
+                passBlocked: event.recordType === 'pass blocked',
+                goalBlocked: event.recordType === 'goal blocked',
+                goal: event.recordType === 'goal'
               }" class="play">
               <div class="eventTime">{{::event.recordGameTime}}'</div>
               <div class="event-info">
