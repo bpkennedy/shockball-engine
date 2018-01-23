@@ -28,6 +28,7 @@ var mainComponent = {
   controller: function ($scope, $interval){
     var ctrl = this;
     ctrl.isRunning = false;
+    ctrl.showDebug = false;
     ctrl.game = main;
     ctrl.gameInterval = null;
     ctrl.world = ctrl.game.world.objects;
@@ -65,12 +66,12 @@ var mainComponent = {
   },
   template: `
     <div>
-      <div class="gameObject">
+      <div class="gameObject" ng-if="ctrl.showDebug">
         <pre>
           <json-tree json="$ctrl.game" collapsed-level="4" edit-level="low" timeout="0" timeoutInit="0"></json-tree>
         </pre>
       </div>
-      <h1>Shockball Match v0.1</h1>
+      <h1 class="header-title" ng-click="ctrl.showDebug = !ctrl.showDebug">Shockball Sim v0.1</h1>
       <div class="playByPlay">
         <div class="live-indicator" ng-if="$ctrl.isRunning">
           ON LIVE
