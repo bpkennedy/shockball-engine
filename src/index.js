@@ -2,6 +2,7 @@ import angular from 'angular'
 import angularSpinner from 'angular-svg-round-progressbar'
 import angularJson from 'json-tree2'
 import scrollGlue from 'angularjs-scroll-glue'
+import angularSlider from 'angularjs-slider'
 const moment = require('moment')
 
 import Main from './main'
@@ -30,6 +31,11 @@ var mainComponent = {
     ctrl.game = main;
     ctrl.gameInterval = null;
     ctrl.world = ctrl.game.world.objects;
+    ctrl.sliderOptions = {
+      floor: ctrl.world[0]['goalPit']['left'],
+      ceil: ctrl.world[0]['goalPit']['right'],
+      disabled: true
+    };
     ctrl.leftPlayers = ctrl.game.world.leftPlayers;
     ctrl.rightPlayers = ctrl.game.world.rightPlayers;
     ctrl.gameEvents = record.records;
@@ -112,6 +118,9 @@ var mainComponent = {
               <div class="rightTeamColor"></div>
             </div>
           </div>
+          <div class="ball-position">
+            <rzslider rz-slider-model="$ctrl.world[2]['goalProximity']" rz-slider-options="$ctrl.sliderOptions"></rzslider>          
+          </div>
         </div>
         <div class="timeline">
           <ul scroll-glue>
@@ -156,6 +165,6 @@ function backgroundImage(){
   };
 }
 
-angular.module('shockballGame', ['json-tree', 'luegg.directives', 'angular-svg-round-progressbar'])
+angular.module('shockballGame', ['json-tree', 'luegg.directives', 'angular-svg-round-progressbar', 'rzModule'])
 .component('main', mainComponent)
 .directive('backImg', backgroundImage)
