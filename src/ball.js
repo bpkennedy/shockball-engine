@@ -9,9 +9,6 @@ export default class Ball {
   }
 
   update() {
-    if (this.possessedBy === null) {
-    } else {
-    }
   }
 
   reset() {

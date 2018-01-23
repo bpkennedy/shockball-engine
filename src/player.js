@@ -172,15 +172,15 @@ export default class Player {
   }
 
   analyzeCanScore(ball, pitch) {
-    const targetGoalResistence = Math.abs(pitch.goalResistence[this.homeGoalSide])
+    const targetGoalResistence = pitch.goalResistence[this.homeGoalSide]
     if (this.homeGoalSide === 'left') {
-      if (Math.abs(pitch.goalPit['left'] - ball.goalProximity) < targetGoalResistence) {
+      if (pitch.goalPit.right - ball.goalProximity < targetGoalResistence) {
         return true
       } else {
         return false
       }
-    } else {
-      if (Math.abs(pitch.goalPit['right'] - ball.goalProximity) < targetGoalResistence) {
+    } else if (this.homeGoalSide === 'right') {
+      if (Math.abs(pitch.goalPit.left - ball.goalProximity) < targetGoalResistence) {
         return true
       } else {
         return false
