@@ -109,26 +109,57 @@ export default class Player {
       // Ball is being carried by a player of my team
     } else if (pitch.state === 'play_on' && ball.possessedBy !== null && ball.lastSideTouched !== this.homeGoalSide) {
       // Ball is being carried by a player of other team
-      // for now the Player chooses to either block a shot or block a pass
+
       let thinksMoreLikelyToShoot = null;
+      let actionGuess = null;
       if (this.homeGoalSide === 'right') {
-        thinksMoreLikelyToShoot = this.analyzeMoreLikelyToShoot(this.playerWorldModel.leftPlayers, ball)
+        //Player first decides: will ball handler throw or run?
+        actionGuess = this.analyzeNextAction(this.playerWorldModel.leftPlayers, ball)
+        if (actionGuess === 'throw') {
+          //Player now checks if more likely to shoot or pass
+          thinksMoreLikelyToShoot = this.analyzeMoreLikelyToShoot(this.playerWorldModel.leftPlayers, ball)
+          if (thinksMoreLikelyToShoot) {
+            this.tryBlockShot()
+          } else {
+            this.tryBlockPass()
+          }
+        } else {
+          console.log('tackle tried from player prediction')
+          this.tryTacklePlayer()
+        }
       } else {
-        thinksMoreLikelyToShoot = this.analyzeMoreLikelyToShoot(this.playerWorldModel.rightPlayers, ball)
-      }
-      
-      if (thinksMoreLikelyToShoot) {
-        this.tryBlockShot()
-      } else {
-        this.tryBlockPass()
+        //Player first decides: will ball handler throw or run?
+        actionGuess = this.analyzeNextAction(this.playerWorldModel.rightPlayers, ball)
+        if (actionGuess === 'throw') {
+          //Player now checks if more likely to shoot or pass
+          thinksMoreLikelyToShoot = this.analyzeMoreLikelyToShoot(this.playerWorldModel.rightPlayers, ball)
+          if (thinksMoreLikelyToShoot) {
+            this.tryBlockShot()
+          } else {
+            this.tryBlockPass()
+          }
+        } else {
+          console.log('tackle tried from player prediction')
+          this.tryTacklePlayer()
+        }
       }
     } else if (pitch.state === 'play_on' && ball.possessedBy === null) {
       // Ball is has been fumbled during play and is free
     }
   }
 
+  analyzeNextAction(opposingPlayers, ball) {
+    const ballCarrier = opposingPlayers.find(function(player) {
+      return player.uid === ball.possessedBy
+    })
+    if (ballCarrier.throwing + ballCarrier.passing > ballCarrier.toughness + chance.rpg('1d12', {sum:true})) {
+      return 'throw'
+    } else {
+      return 'run'
+    }
+  }
+
   analyzeMoreLikelyToShoot(players, ball) {
-    //this is correctly working
     const ballCarrier = players.find(function(player) {
       return player.uid === ball.possessedBy
     })
@@ -158,7 +189,7 @@ export default class Player {
   }
 
   analyzeCanPass() {
-    if (this.throwing + this.passing > this.toughness) {
+    if (this.throwing + this.passing > this.toughness + chance.rpg('1d12', {sum:true})) {
       return true
     } else {
       return false
@@ -179,6 +210,10 @@ export default class Player {
 
   tryTackleBall() {
     this.challenge.addTackleBall(this)
+  }
+
+  tryTacklePlayer() {
+    this.challenge.addTryTacklePlayer(this)
   }
 
   tryBlockPass() {
