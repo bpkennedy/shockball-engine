@@ -39,6 +39,9 @@ export default class Record {
       case 'tackles ball':
         return this.pickRandomTackleBall()
         break;
+      case 'tackles':
+        return this.pickRandomTacklePlayer(player)
+        break;
       case 'runs ball':
         return this.pickRandomPlayerRun()
         break;
@@ -66,10 +69,21 @@ export default class Record {
   pickRandomTackleBall() {
     const phrases = [
       'crashes in and emerges with the ball',
-      'struggles to free himself, but he has the ball now!',
+      'struggles to get free, but has the ball now!',
       'wins the tackle for the ball',
       'roughs up the opponent for the ball',
       'deftly snipes the ball from the opposition!'
+    ]
+    return phrases[Math.floor(Math.random()*phrases.length)];
+  }
+
+  pickRandomTacklePlayer(player) {
+    const phrases = [
+      `hammers ${player.opposingActorFirstName} into the wall!`,
+      `roughs up ${player.opposingActorFirstName}`,
+      `smashes ${player.opposingActorFirstName} into the ground!`,
+      `topples ${player.opposingActorFirstName} cleanly to ground`,
+      `wipes the floor with ${player.opposingActorFirstName}`
     ]
     return phrases[Math.floor(Math.random()*phrases.length)];
   }

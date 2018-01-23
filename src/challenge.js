@@ -13,6 +13,7 @@ export default class Challenge {
     this.playerTryRun = []
     this.playerTryScore = []
     this.playerTryPass = []
+    this.playerTryTackle = []
     this.record = record
   }
 
@@ -42,6 +43,7 @@ export default class Challenge {
     this.playerTryRun =[]
     this.playerTryScore = []
     this.playerTryPass = []
+    this.playerTryTackle = []
   }
 
   addTackleBall(player) {
@@ -58,6 +60,10 @@ export default class Challenge {
 
   addTryPass(player) {
     this.playerTryPass.push(player)
+  }
+
+  addTryTacklePlayer(player) {
+    this.playerTryTackle.push(player)
   }
 
   resolveTackleBall() {
@@ -87,17 +93,22 @@ export default class Challenge {
       return player.uid === theBall.possessedBy
     })
 
-    if (Math.abs(this.ball.goalProximity) < Math.abs(this.pitch.goalPit[runningPlayer.homeGoalSide])) {
-      if (runningPlayer.homeGoalSide === 'right') {
-        this.record.add(runningPlayer, 'runs ball', this.board.gameTime)
-        this.ball.goalProximity--
-      } else if (runningPlayer.homeGoalSide === 'left') {
-        this.record.add(runningPlayer, 'runs ball', this.board.gameTime)
-        this.ball.goalProximity++
+    //first player needs to beat tackle challenges from opposition, if there are any
+    if (this.playerTryTackle.length > 0) {
+      //we'll pick one at random for now
+      const randomTackler = chance.pickone(this.playerTryTackle, 1)
+      const tacklerScore = randomTackler.toughness + randomTackler.vision + chance.rpg('2d6', {sum:true})
+      const runningPlayerScore = runningPlayer.toughness + runningPlayer.vision + chance.rpg('2d6', {sum:true})
+      if (runningPlayerScore > tacklerScore) {
+        this.runForward(runningPlayer)
+      } else {
+        //gets tackled
+        this.getsTackled(runningPlayer, randomTackler, theBall)
       }
     } else {
-      console.log('in this player run else')
+      this.runForward(runningPlayer)
     }
+
   }
 
   resolvePlayerTryScore() {
@@ -150,21 +161,10 @@ export default class Challenge {
 
     if (shootingScore > blockingScore || shootingPlayer === opposingPlayer) {
       // shooter scores
-      shootingPlayer.opposingActorUid = opposingPlayer.uid
-      shootingPlayer.opposingActorFirstName = opposingPlayer.firstName
-      this.record.add(shootingPlayer, 'goal', this.board.gameTime)
-      theBall.reset()
-      this.board.addScore(shootingPlayer.homeGoalSide)
-      this.pitch.lastGoalSide = shootingPlayer.homeGoalSide
-      this.pitch.state = 'before_kickoff'
-      theBall.lastSideTouched = null
+      this.score(shootingPlayer, opposingPlayer, theBall)
     } else {
       // shooter is blocked
-      opposingPlayer.opposingActorUid = shootingPlayer.uid
-      opposingPlayer.opposingActorFirstName = shootingPlayer.firstName
-      this.record.add(opposingPlayer, 'goal blocked', this.board.gameTime)
-      theBall.possessedBy = opposingPlayer.uid
-      theBall.lastSideTouched = opposingPlayer.homeGoalSide
+      this.goalBlock(shootingPlayer, opposingPlayer, theBall)
     }
 
   }
@@ -241,6 +241,48 @@ export default class Challenge {
     }
 
     theBall.possessedBy = playerToWinPossession.uid
+  }
+
+  score(shootingPlayer, opposingPlayer, ball) {
+    shootingPlayer.opposingActorUid = opposingPlayer.uid
+    shootingPlayer.opposingActorFirstName = opposingPlayer.firstName
+    this.record.add(shootingPlayer, 'goal', this.board.gameTime)
+    ball.reset()
+    this.board.addScore(shootingPlayer.homeGoalSide)
+    this.pitch.lastGoalSide = shootingPlayer.homeGoalSide
+    this.pitch.state = 'before_kickoff'
+    ball.lastSideTouched = null
+  }
+
+  goalBlock(shootingPlayer, opposingPlayer, ball) {
+    opposingPlayer.opposingActorUid = shootingPlayer.uid
+    opposingPlayer.opposingActorFirstName = shootingPlayer.firstName
+    this.record.add(opposingPlayer, 'goal blocked', this.board.gameTime)
+    ball.possessedBy = opposingPlayer.uid
+    ball.lastSideTouched = opposingPlayer.homeGoalSide
+  }
+
+  runForward(runningPlayer) {
+    if (Math.abs(this.ball.goalProximity) < Math.abs(this.pitch.goalPit[runningPlayer.homeGoalSide])) {
+      if (runningPlayer.homeGoalSide === 'right') {
+        this.record.add(runningPlayer, 'runs ball', this.board.gameTime)
+        this.ball.goalProximity--
+      } else if (runningPlayer.homeGoalSide === 'left') {
+        this.record.add(runningPlayer, 'runs ball', this.board.gameTime)
+        this.ball.goalProximity++
+      }
+    } else {
+      console.log('in this player run else')
+    }
+  }
+
+  getsTackled(runningPlayer, randomTackler, ball) {
+    randomTackler.opposingActorUid = runningPlayer.uid
+    randomTackler.opposingActorFirstName = runningPlayer.firstName
+    this.record.add(randomTackler, 'tackles', this.board.gameTime)
+    ball.possess(randomTackler.uid)
+    ball.lastSideTouched = randomTackler.homeGoalSide
+    ball.lastPlayerTouched = randomTackler.uid
   }
 
 }
