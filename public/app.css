@@ -1,3 +1,12 @@
+html, body, main {
+    height:100%;
+}
+.wrapper {
+    height:100%;
+}
+main > div {
+    height: 100%;
+}
 body {
     color:black;
 }
@@ -8,12 +17,25 @@ h1 {
     margin-top: 0;
     padding-left: 10px;
 }
+.header-title {
+    color: #fff;
+    margin: 8px;
+    display: inline-block;
+    width: auto;
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 6px;
+}
+.header-title:hover {
+    cursor: pointer;
+}
 .gameObject {
     color:Red;
     background-color: #ddd;
     border-radius: 5px;
     padding: 12px;
     display: inline-block;
+    max-width: 475px;
 }
 main {
     background-color: #F5F5F5;
