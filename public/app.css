@@ -166,7 +166,7 @@ main > div {
     overflow-x: hidden;
     overflow-y: scroll;
     padding-right:20px;
-    width:104%;
+    width:103%;
 }
 
 .timeline ul li {
@@ -404,4 +404,33 @@ li.left .eventTime {
     text-align: center;
     line-height: 40px;
     background-color: #ffffff;
+}
+.ball-position {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 20px;
+    position: absolute;
+    bottom: -7px;
+}
+.rz-bubble {
+    display: none!important;
+}
+.rzslider .rz-pointer {
+    transition: left cubic-bezier(.42, 0, .58, 1) 1.0s;
+}
+.rzslider:hover .rz-pointer {
+    transition: none;
+}
+.rzslider.noanimate .rz-pointer {
+    transition: none;
+}
+.rz-pointer {
+    background-image:    url("shockballLogo.png");
+    background-size:     cover;
+    background-repeat:   no-repeat;
+    background-position: center center;
+    background-color: transparent!important;
+}
+.rz-pointer:after {
+    display: none!important;
 }
